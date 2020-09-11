@@ -31,6 +31,12 @@ test('htmlparser2 do not normalize whitespace', () => {
     )).toBe(
         "Hello World\n\n"
     );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("<font>   this is the text <font></font>  </font>")
+    )).toBe(
+        "   this is the text   "
+    );
 });
 
 
@@ -42,21 +48,21 @@ test('Decode html entities', () => {
     );
 
     expect(wizmarkdown.extract(
-        wrapTextInHtml5("<p>`&amp;nbsp;`</p>")
+        wrapTextInHtml5("<p>Show `&amp;nbsp;`</p>")
     )).toBe(
-        "`&nbsp;`\n"
+        "Show `&nbsp;`\n"
     );
 
     expect(wizmarkdown.extract(
-        wrapTextInHtml5("<p>`&lt;br/&gt;`</p>")
+        wrapTextInHtml5("<p>Show `&lt;br/&gt;`</p>")
     )).toBe(
-        "`<br/>`\n"
+        "Show `<br/>`\n"
     );
 
     expect(wizmarkdown.extract(
-        wrapTextInHtml5("<p>\"\"</p>")
+        wrapTextInHtml5("<p>Show \"\"</p>")
     )).toBe(
-        "\"\"\n"
+        "Show \"\"\n"
     );
 })
 

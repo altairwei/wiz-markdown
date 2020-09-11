@@ -25,16 +25,34 @@ const no_entity_sub = ["script", "style"];
 
 function extract(html) {
     let markdown_lines = [];
+    let in_body_tag = false;
+    let pause = false;
     const parser = new htmlparser2.Parser({
+        onopentag(tagname, attribs) {
+            if (tagname === "script" || tagname === "style") {
+                // Stop extract script or style
+                pause = true;
+            } else if (tagname == "body") {
+                in_body_tag = true;
+            }
+        },
         ontext(text) {
-            text = text.replace(/&nbsp;/g, '\u0020');
-            text = he.decode(text);
-            markdown_lines.push(text);
+            if (in_body_tag && !pause) {
+                text = text.replace(/&nbsp;/g, '\u0020');
+                text = he.decode(text);
+                markdown_lines.push(text);
+            }
         },
         onclosetag(tagname) {
-            if (block_level.includes(tagname)) {
+            if (tagname === "script" || tagname === "style") {
+                // Continue to extract after script or style
+                pause = false;
+            } else if (tagname === "body") {
+                in_body_tag = false;
+            } else if (block_level.includes(tagname)) {
                 markdown_lines.push("\n");
             } else if (tagname === "br") {
+                // <br/> should add one more line break
                 markdown_lines.push("\n\n");
             }
         },
