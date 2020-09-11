@@ -12,10 +12,13 @@
     "jest": "^26.4.2"
   },
   "jest": {
-    "verbose": true,
+    "verbose": false,
     "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.[jt]sx?$"
   },
   "dependencies": {
-    "jsdom": "^16.4.0"
+    "he": "^1.2.0",
+    "htmlparser2": "^4.1.0",
+    "jsdom": "^16.4.0",
+    "sanitize-html": "^1.27.4"
   }
 }
