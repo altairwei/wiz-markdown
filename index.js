@@ -51,7 +51,7 @@ function extract(html) {
                 markdown_lines.push("\n");
             } else if (tagname === "br") {
                 // <br/> should add one more line break
-                markdown_lines.push("\n\n");
+                markdown_lines.push("\n");
             }
         },
     }, {

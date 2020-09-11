@@ -1,4 +1,5 @@
 module.exports = {
+    "plugins": ["jest"],
     "env": {
         "browser": true,
         "commonjs": true,

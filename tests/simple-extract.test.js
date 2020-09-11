@@ -1,5 +1,4 @@
 const wizmarkdown = require("../index");
-const {test, expect} = require("jest");
 
 function wrapTextInHtml5(text) {
     return `<!DOCTYPE html><html><head></head><body>${text}</body></html>`;
@@ -9,7 +8,7 @@ test("Block element in markdown code", () => {
     expect(wizmarkdown.extract(
         wrapTextInHtml5("Hello <br/> World")
     )).toBe(
-        "Hello \n\n World"
+        "Hello \n World"
     );
 
     expect(wizmarkdown.extract(

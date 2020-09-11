@@ -10,9 +10,5 @@ test("Extract from a standalone markdown in html", () => {
     test_dir = path.dirname(__filename);
     html = fs.readFileSync(path.join(test_dir, "samples", "document-sample-01.html"), "utf8");
     markdown = fs.readFileSync(path.join(test_dir, "samples", "document-sample-01.md"), "utf8");
-    expect(wizmarkdown.extract(
-        html
-    )).toBe(
-        markdown
-    );
+    expect(wizmarkdown.extract(html)).toBe(markdown);
 });
