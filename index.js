@@ -1,5 +1,3 @@
-const { JSDOM } = require("jsdom");
-const sanitizeHtml = require("sanitize-html");
 const htmlparser2 = require("htmlparser2");
 const he = require("he");
 
@@ -38,7 +36,7 @@ function extract(html) {
         },
         ontext(text) {
             if (in_body_tag && !pause) {
-                text = text.replace(/&nbsp;/g, '\u0020');
+                text = text.replace(/&nbsp;/g, "\u0020");
                 text = he.decode(text);
                 markdown_lines.push(text);
             }
@@ -73,4 +71,4 @@ function embed(text) {
 module.exports = {
     extract,
     embed
-}
+};

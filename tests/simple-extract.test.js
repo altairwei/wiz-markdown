@@ -1,10 +1,11 @@
-const wizmarkdown = require("../index")
+const wizmarkdown = require("../index");
+const {test, expect} = require("jest");
 
 function wrapTextInHtml5(text) {
-    return `<!DOCTYPE html><html><head></head><body>${text}</body></html>`
+    return `<!DOCTYPE html><html><head></head><body>${text}</body></html>`;
 }
 
-test('Block element in markdown code', () => {
+test("Block element in markdown code", () => {
     expect(wizmarkdown.extract(
         wrapTextInHtml5("Hello <br/> World")
     )).toBe(
@@ -25,7 +26,7 @@ test('Block element in markdown code', () => {
 });
 
 
-test('htmlparser2 do not normalize whitespace', () => {
+test("htmlparser2 do not normalize whitespace", () => {
     expect(wizmarkdown.extract(
         wrapTextInHtml5("<p>Hello World</p>\n")
     )).toBe(
@@ -40,7 +41,7 @@ test('htmlparser2 do not normalize whitespace', () => {
 });
 
 
-test('Decode html entities', () => {
+test("Decode html entities", () => {
     expect(wizmarkdown.extract(
         wrapTextInHtml5("<p>&nbsp;&nbsp;Hello&nbsp;World&nbsp;</p>")
     )).toBe(
@@ -64,10 +65,10 @@ test('Decode html entities', () => {
     )).toBe(
         "Show \"\"\n"
     );
-})
+});
 
 
-test('Markdown in <pre> tag', () => {
+test("Markdown in <pre> tag", () => {
     expect(wizmarkdown.extract(
         wrapTextInHtml5("<pre>  # Hello World </pre>")
     )).toBe(
@@ -79,4 +80,4 @@ test('Markdown in <pre> tag', () => {
     )).toBe(
         "  # Hello World \n"
     );
-})
+});

@@ -3,12 +3,17 @@
   "version": "1.0.0",
   "description": "Extract Markdown text embedded in HTML.",
   "main": "index.js",
+  "bin": {
+    "wizmd": "./cli.js"
+  },
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "lint": "eslint --ext .js ./"
   },
   "author": "Altair Wei",
   "license": "MIT",
   "devDependencies": {
+    "eslint": "^7.8.1",
     "jest": "^26.4.2"
   },
   "jest": {
@@ -17,8 +22,6 @@
   },
   "dependencies": {
     "he": "^1.2.0",
-    "htmlparser2": "^4.1.0",
-    "jsdom": "^16.4.0",
-    "sanitize-html": "^1.27.4"
+    "htmlparser2": "^4.1.0"
   }
 }
