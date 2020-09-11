@@ -1,0 +1,11 @@
+{
+  "name": "@altairwei/mdinhtml",
+  "version": "1.0.0",
+  "description": "Extract Markdown text embedded in HTML.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Altair Wei",
+  "license": "MIT"
+}
