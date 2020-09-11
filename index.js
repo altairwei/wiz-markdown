@@ -23,7 +23,7 @@ const preserve_whitespace = ["pre", "textarea", "script", "style"];
 const special_handling = ["html", "body"];
 const no_entity_sub = ["script", "style"];
 
-function extractMarkdownFromHtml(html) {
+function extract(html) {
     let markdown_lines = [];
     const parser = new htmlparser2.Parser({
         ontext(text) {
@@ -48,6 +48,11 @@ function extractMarkdownFromHtml(html) {
     return markdown_lines.join("");
 }
 
+function embed(text) {
+
+}
+
 module.exports = {
-    extractMarkdownFromHtml
+    extract,
+    embed
 }
