@@ -4,8 +4,18 @@
   "description": "Extract Markdown text embedded in HTML.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest"
   },
   "author": "Altair Wei",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^26.4.2"
+  },
+  "jest": {
+    "verbose": true,
+    "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.[jt]sx?$"
+  },
+  "dependencies": {
+    "jsdom": "^16.4.0"
+  }
 }
