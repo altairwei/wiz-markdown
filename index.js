@@ -21,21 +21,27 @@ const special_handling = ["html", "body"];
 const no_entity_sub = ["script", "style"];
 
 const default_extract_options = {
-    convertImgTag: false
+    convertImgTag: false,
+    verbose: false,
+    skipNonBodyTag: false
 };
 
 function extract(html, options = default_extract_options) {
-    const { convertImgTag } = options;
+    const { convertImgTag, verbose, skipNonBodyTag } = options;
 
     let markdown_lines = [];
     let in_body_tag = false;
-    let pause = false;
+    let in_script_tag = false;
+    let in_style_tag = false;
     let pre_tag_stack = [];
+
     const parser = new htmlparser2.Parser({
         onopentag(tagname, attribs) {
-            if (tagname === "script" || tagname === "style") {
+            if (tagname === "script") {
                 // Stop extract script or style
-                pause = true;
+                in_script_tag = true;
+            } else if (tagname === "style") {
+                in_style_tag = true;
             } else if (tagname === "body") {
                 in_body_tag = true;
             } else if (tagname === "pre" && in_body_tag) {
@@ -46,23 +52,12 @@ function extract(html, options = default_extract_options) {
                 markdown_lines.push(`![${alt}](${src})`);
             }
         },
-        ontext(text) {
-            if (in_body_tag && !pause) {
-                text = text.replace(/&apos;/g, "'")
-                    .replace(/&quot;/g, "\"")
-                    .replace(/&grave;/g, "`")
-                    .replace(/&lt;/g, "<")
-                    .replace(/&gt;/g, ">");
-                text = text.replace(/&nbsp;/g, "\u0020");
-                // &amp; should be decoded after all other entities.
-                text = text.replace(/&amp;/g, "&");
-                markdown_lines.push(text);
-            }
-        },
         onclosetag(tagname) {
-            if (tagname === "script" || tagname === "style") {
+            if (tagname === "script") {
                 // Continue to extract after script or style
-                pause = false;
+                in_script_tag = false;
+            } else if (tagname === "style") {
+                in_style_tag = false;
             } else if (tagname === "body") {
                 in_body_tag = false;
             } else if (tagname === "pre" && in_body_tag) {
@@ -78,10 +73,37 @@ function extract(html, options = default_extract_options) {
                 markdown_lines.push("\n");
             }
         },
-    }, {
+        ontext(text) {
+            if (in_script_tag || in_style_tag) {
+                // Skip script and style content
+                return;
+            }
+
+            if (skipNonBodyTag && !in_body_tag) {
+                return;
+            }
+
+            text = text.replace(/&apos;/g, "'")
+                .replace(/&quot;/g, "\"")
+                .replace(/&grave;/g, "`")
+                .replace(/&lt;/g, "<")
+                .replace(/&gt;/g, ">");
+            text = text.replace(/&nbsp;/g, "\u0020");
+            // &amp; should be decoded after all other entities.
+            text = text.replace(/&amp;/g, "&");
+            markdown_lines.push(text);
+        },
+        onerror(error) {
+            if (verbose) {
+                console.error(error);
+            }
+        }
+    },
+    {
         decodeEntities: false,
         recognizeSelfClosing: true,
-        lowerCaseTags: true
+        lowerCaseTags: true,
+        lowerCaseAttributeNames: true
     });
     parser.write(html);
     parser.end();

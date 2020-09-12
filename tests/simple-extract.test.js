@@ -93,19 +93,22 @@ test("Markdown in <pre> tag", () => {
 
 test("Skip non-body tag", () => {
     expect(wizmarkdown.extract(
-        "<!DOCTYPE html><html><head>Skip me</head><body><pre># Hello World </pre></body></html>"
+        "<!DOCTYPE html><html><head>Skip me</head><body><pre># Hello World </pre></body></html>",
+        {skipNonBodyTag: true}
     )).toBe(
         "# Hello World "
     );
 
     expect(wizmarkdown.extract(
-        "<!DOCTYPE html><html><head></head><body><pre># Hello World </pre></body>Skip me</html>"
+        "<!DOCTYPE html><html><head></head><body><pre># Hello World </pre></body>Skip me</html>",
+        {skipNonBodyTag: true}
     )).toBe(
         "# Hello World "
     );
 
     expect(wizmarkdown.extract(
-        "<!DOCTYPE html><html><head></head><body>Include me <pre># Hello World </pre></body></html>"
+        "<!DOCTYPE html><html><head></head><body>Include me <pre># Hello World </pre></body></html>",
+        {skipNonBodyTag: true}
     )).toBe(
         "Include me # Hello World "
     );
@@ -172,4 +175,15 @@ test("Convert img tag to markdown syntax", () => {
     )).toBe(
         "# Show image \n![Apple](index_files/IMG_01.jpg)"
     );
+});
+
+
+test("Incomplete html structure", () => {
+    // Naked html content
+    expect(wizmarkdown.extract(
+        "<pre># Show image <br/><p>**No** image.</p></pre>"
+    )).toBe(
+        "# Show image \n**No** image.\n"
+    );
+    // <doctype> in wrong location
 });
