@@ -37,14 +37,25 @@ if (program.flags.includes("--extract")) {
     filename = path.resolve(program.files[0]);
     dest_filename = path.resolve(program.files[1]);
     if (fs.existsSync(filename) && fs.statSync(filename).isFile()) {
-        html = fs.readFileSync(filename, "utf8");
+        html = fs.readFileSync(filename, "utf-8");
         markdown = wizmarkdown.extract(html);
         fs.writeFileSync(dest_filename, markdown, "utf-8");
     } else {
         console.error(`Error: Cannot find file '${filename}'.`);
     }
 } else if (program.flags.includes("--embed")) {
-
+    if (program.files.length != 2) {
+        console.error("Error: source file and dest file both needed.");
+    }
+    filename = path.resolve(program.files[0]);
+    dest_filename = path.resolve(program.files[1]);
+    if (fs.existsSync(filename) && fs.statSync(filename).isFile()) {
+        text = fs.readFileSync(filename, "utf-8");
+        html = wizmarkdown.embed(text);
+        fs.writeFileSync(dest_filename, html, "utf-8");
+    } else {
+        console.error(`Error: Cannot find file '${filename}'.`);
+    }
 } else if (program.flags.includes("--help")) {
     console.log(`
     Usage: wizmd [option] SOURCE_FILE DEST_FILE

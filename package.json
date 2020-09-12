@@ -22,7 +22,6 @@
     "testRegex": "(/tests/.*|(\\.|/)(test|spec))\\.[jt]sx?$"
   },
   "dependencies": {
-    "he": "^1.2.0",
     "htmlparser2": "^4.1.0"
   }
 }

@@ -48,21 +48,24 @@ test("Decode html entities", () => {
     );
 
     expect(wizmarkdown.extract(
-        wrapTextInHtml5("<p>Show `&amp;nbsp;`</p>")
+        wrapTextInHtml5("<p>Show \"\"</p>")
     )).toBe(
-        "Show `&nbsp;`\n"
+        "Show \"\"\n"
+    );
+});
+
+
+test("Html entities from user input", () => {
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("<p>Show `&amp;nbsp;` and `&amp;gt;`</p>")
+    )).toBe(
+        "Show `&nbsp;` and `&gt;`\n"
     );
 
     expect(wizmarkdown.extract(
         wrapTextInHtml5("<p>Show `&lt;br/&gt;`</p>")
     )).toBe(
         "Show `<br/>`\n"
-    );
-
-    expect(wizmarkdown.extract(
-        wrapTextInHtml5("<p>Show \"\"</p>")
-    )).toBe(
-        "Show \"\"\n"
     );
 });
 
@@ -71,12 +74,78 @@ test("Markdown in <pre> tag", () => {
     expect(wizmarkdown.extract(
         wrapTextInHtml5("<pre>  # Hello World </pre>")
     )).toBe(
-        "  # Hello World \n"
+        "  # Hello World "
     );
 
     expect(wizmarkdown.extract(
         wrapTextInHtml5("<pre>  # Hello World </pre>")
     )).toBe(
-        "  # Hello World \n"
+        "  # Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("<pre>  # Hello World <pre>hehehe</pre> hahaha</pre>")
+    )).toBe(
+        "  # Hello World hehehe\n hahaha"
+    );
+});
+
+
+test("Skip non-body tag", () => {
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head>Skip me</head><body><pre># Hello World </pre></body></html>"
+    )).toBe(
+        "# Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head></head><body><pre># Hello World </pre></body>Skip me</html>"
+    )).toBe(
+        "# Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head></head><body>Include me <pre># Hello World </pre></body></html>"
+    )).toBe(
+        "Include me # Hello World "
+    );
+});
+
+
+test("Skip script and style tag", () => {
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head><script>var a = 1;</script></head><body><pre># Hello World </pre></body></html>"
+    )).toBe(
+        "# Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head></head><body><script>var a = 1;</script><pre># Hello World </pre></body></html>"
+    )).toBe(
+        "# Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head></head><body><pre># Hello World </pre><script>var a = 1;</script></body></html>"
+    )).toBe(
+        "# Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head><style>h1 {padding: 0;}</style></head><body><pre># Hello World </pre></body></html>"
+    )).toBe(
+        "# Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head></head><body><style>h1 {padding: 0;}</style><pre># Hello World </pre></body></html>"
+    )).toBe(
+        "# Hello World "
+    );
+
+    expect(wizmarkdown.extract(
+        "<!DOCTYPE html><html><head></head><body><pre># Hello World </pre><style>h1 {padding: 0;}</style></body></html>"
+    )).toBe(
+        "# Hello World "
     );
 });
