@@ -16,7 +16,7 @@
     "test": "jest",
     "lint": "eslint --ext .js ./",
     "build": "webpack",
-    "prepublishOnly": "npm build",
+    "prepublishOnly": "npm run build",
     "preversion": "npm test"
   },
   "author": "Altair Wei",
