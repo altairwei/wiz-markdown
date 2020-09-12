@@ -1,26 +1,31 @@
 {
   "name": "@altairwei/wiz-markdown",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Extract Markdown text embedded in HTML.",
   "homepage": "https://github.com/altairwei/wiz-markdown#readme",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/altairwei/wiz-markdown.git"
+    "type": "git",
+    "url": "https://github.com/altairwei/wiz-markdown.git"
   },
   "main": "index.js",
+  "browser": "dist/wiz-markdown.js",
   "bin": {
     "wizmd": "./cli.js"
   },
   "scripts": {
     "test": "jest",
-    "lint": "eslint --ext .js ./"
+    "lint": "eslint --ext .js ./",
+    "build": "webpack"
   },
   "author": "Altair Wei",
   "license": "MIT",
   "devDependencies": {
+    "clean-webpack-plugin": "^3.0.0",
     "eslint": "^7.8.1",
     "eslint-plugin-jest": "^24.0.0",
-    "jest": "^26.4.2"
+    "jest": "^26.4.2",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12"
   },
   "jest": {
     "verbose": false,
