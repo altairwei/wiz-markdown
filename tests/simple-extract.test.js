@@ -149,3 +149,27 @@ test("Skip script and style tag", () => {
         "# Hello World "
     );
 });
+
+
+test("Convert img tag to markdown syntax", () => {
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("<img src='index_files/IMG_01.jpg' />"),
+        {convertImgTag: true}
+    )).toBe(
+        "![](index_files/IMG_01.jpg)"
+    );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("<img alt='This is img' src='index_files/IMG_01.jpg' />"),
+        {convertImgTag: true}
+    )).toBe(
+        "![This is img](index_files/IMG_01.jpg)"
+    );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("# Show image <br/><img alt='Apple' src='index_files/IMG_01.jpg' />"),
+        {convertImgTag: true}
+    )).toBe(
+        "# Show image \n![Apple](index_files/IMG_01.jpg)"
+    );
+});

@@ -20,7 +20,13 @@ const preserve_whitespace = ["pre", "textarea", "script", "style"];
 const special_handling = ["html", "body"];
 const no_entity_sub = ["script", "style"];
 
-function extract(html) {
+const default_extract_options = {
+    convertImgTag: false
+};
+
+function extract(html, options = default_extract_options) {
+    const { convertImgTag } = options;
+
     let markdown_lines = [];
     let in_body_tag = false;
     let pause = false;
@@ -34,6 +40,10 @@ function extract(html) {
                 in_body_tag = true;
             } else if (tagname === "pre" && in_body_tag) {
                 pre_tag_stack.push(tagname);
+            } else if (tagname === "img" && convertImgTag) {
+                const alt = attribs.alt ? attribs.alt : "";
+                const src = attribs.src ? attribs.src : "";
+                markdown_lines.push(`![${alt}](${src})`);
             }
         },
         ontext(text) {

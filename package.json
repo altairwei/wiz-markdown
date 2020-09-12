@@ -1,6 +1,6 @@
 {
   "name": "@altairwei/wiz-markdown",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Extract Markdown text embedded in HTML.",
   "homepage": "https://github.com/altairwei/wiz-markdown#readme",
   "repository": {

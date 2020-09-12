@@ -38,7 +38,7 @@ if (program.flags.includes("--extract")) {
     dest_filename = path.resolve(program.files[1]);
     if (fs.existsSync(filename) && fs.statSync(filename).isFile()) {
         html = fs.readFileSync(filename, "utf-8");
-        markdown = wizmarkdown.extract(html);
+        markdown = wizmarkdown.extract(html, {convertImgTag: true});
         fs.writeFileSync(dest_filename, markdown, "utf-8");
     } else {
         console.error(`Error: Cannot find file '${filename}'.`);

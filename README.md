@@ -2,7 +2,7 @@ Extract markdown source code from html:
 
 ```javascript
 const wizmarkdown = require("@altairwei/wiz-markdown");
-const markdown = wizmarkdown.extract(html);
+const markdown = wizmarkdown.extract(html, {convertImgTag: true});
 console.log(markdown);
 ```
 
