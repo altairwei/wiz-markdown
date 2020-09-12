@@ -15,10 +15,15 @@
   "scripts": {
     "test": "jest",
     "lint": "eslint --ext .js ./",
-    "build": "webpack"
+    "build": "webpack",
+    "prepublishOnly": "npm build",
+    "preversion": "npm test"
   },
   "author": "Altair Wei",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "clean-webpack-plugin": "^3.0.0",
     "eslint": "^7.8.1",
