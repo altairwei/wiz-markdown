@@ -33,7 +33,7 @@ function extract(html, options = default_extract_options) {
     let in_body_tag = false;
     let in_script_tag = false;
     let in_style_tag = false;
-    let pre_tag_stack = [];
+    let in_pre_tag = false;
 
     const parser = new htmlparser2.Parser({
         onopentag(tagname, attribs) {
@@ -45,7 +45,7 @@ function extract(html, options = default_extract_options) {
             } else if (tagname === "body") {
                 in_body_tag = true;
             } else if (tagname === "pre" && in_body_tag) {
-                pre_tag_stack.push(tagname);
+                in_pre_tag = true;
             } else if (tagname === "img" && convertImgTag) {
                 const alt = attribs.alt ? attribs.alt : "";
                 const src = attribs.src ? attribs.src : "";
@@ -61,11 +61,7 @@ function extract(html, options = default_extract_options) {
             } else if (tagname === "body") {
                 in_body_tag = false;
             } else if (tagname === "pre" && in_body_tag) {
-                pre_tag_stack.pop();
-                // outmost pre tag should not add line break
-                if (pre_tag_stack.length !== 0) {
-                    markdown_lines.push("\n");
-                }
+                in_pre_tag = false;
             } else if (block_level.includes(tagname)) {
                 markdown_lines.push("\n");
             } else if (tagname === "br") {
@@ -87,7 +83,8 @@ function extract(html, options = default_extract_options) {
                 .replace(/&quot;/g, "\"")
                 .replace(/&grave;/g, "`")
                 .replace(/&lt;/g, "<")
-                .replace(/&gt;/g, ">");
+                .replace(/&gt;/g, ">")
+                .replace(/&Tab;/g, "\t");
             text = text.replace(/&nbsp;/g, "\u0020");
             // &amp; should be decoded after all other entities.
             text = text.replace(/&amp;/g, "&");
@@ -110,7 +107,12 @@ function extract(html, options = default_extract_options) {
     return markdown_lines.join("");
 }
 
-function embed(text) {
+const default_embed_options = {
+    escapeTabWithEntity: false
+};
+
+function embed(text, options = default_embed_options) {
+    const { escapeTabWithEntity } = options;
     const char_array = Array.from(text);
     const encoded = char_array.map(function(char) {
         switch(char) {
@@ -129,14 +131,14 @@ function embed(text) {
             return "&gt;";
         // Space and line break
         case "\t":
-            return "&nbsp;".repeat(4);
+            return escapeTabWithEntity ? "&Tab;" : "&nbsp;".repeat(4);
         case "\n":
         case "\r":
         case "\r\n":
         case "\u0085":
         case "\u2028":
         case "\u2029":
-            return "<br/>";
+            return "<br>";
         case "\u0020":
             return "&nbsp;";
         default:

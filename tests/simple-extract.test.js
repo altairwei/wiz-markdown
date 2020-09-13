@@ -83,10 +83,18 @@ test("Markdown in <pre> tag", () => {
         "  # Hello World "
     );
 
+    // pre tag should not be nested.
     expect(wizmarkdown.extract(
         wrapTextInHtml5("<pre>  # Hello World <pre>hehehe</pre> hahaha</pre>")
     )).toBe(
-        "  # Hello World hehehe\n hahaha"
+        "  # Hello World hehehe hahaha"
+    );
+
+    // Naked html content
+    expect(wizmarkdown.extract(
+        "<pre># Show image <br/><p>**No** image.</p></pre>"
+    )).toBe(
+        "# Show image \n**No** image.\n"
     );
 });
 
@@ -181,9 +189,53 @@ test("Convert img tag to markdown syntax", () => {
 test("Incomplete html structure", () => {
     // Naked html content
     expect(wizmarkdown.extract(
-        "<pre># Show image <br/><p>**No** image.</p></pre>"
+        "# Show image <br/><p>**No** image.</p>"
     )).toBe(
         "# Show image \n**No** image.\n"
     );
-    // <doctype> in wrong location
+
+    expect(wizmarkdown.extract(
+        "<p>## Wrong text out of body.</p><body></body>"
+    )).toBe(
+        "## Wrong text out of body.\n"
+    );
+
+    // <doctype> in wrong location 
+    expect(wizmarkdown.extract(
+        "<script type='text/javascript'>console.log('Hello World')</script>"
+        + "<style type='text/css'>h1 {color:red;} p {color:blue;}</style>"
+        + "<!DOCTYPE html>" + "<p>## Wrong doctype location</p>"
+    )).toBe(
+        "## Wrong doctype location\n"
+    );
+});
+
+
+test("Formated html string with line breaks", () => {
+    expect(wizmarkdown.extract(
+`<!DOCTYPE html>
+<html>
+  <head>
+    <title>Href Attribute Example</title>
+  </head>
+  <body>
+    <h1>Href Attribute Example</h1>
+    <p>Hello</p>
+  </body>
+</html>`
+    )).toBe(
+        "\n\n  \n    Href Attribute Example\n  \n" // head
+        + "  \n    Href Attribute Example\n\n    Hello\n\n  \n" // body
+    );
+});
+
+
+test("Non-named html entities", () => {
+    // Decimal
+    expect(wizmarkdown.extract(
+        "&#160;&#9;&#60;&#62;&#38;&#34;&#39;&#96;"
+    )).toBe(
+        "&#160;&#9;&#60;&#62;&#38;&#34;&#39;&#96;"
+        // Actual "\u00ao\t<>&\"'`"
+    );
 });
