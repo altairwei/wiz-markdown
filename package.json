@@ -8,6 +8,7 @@
     "url": "https://github.com/altairwei/wiz-markdown.git"
   },
   "main": "index.js",
+  "types": "index.d.ts",
   "browser": "dist/wiz-markdown.js",
   "bin": {
     "wizmd": "./cli.js"
