@@ -17,7 +17,8 @@
     "lint": "eslint --ext .js ./",
     "build": "webpack",
     "prepublishOnly": "npm run build",
-    "preversion": "npm test"
+    "preversion": "npm test",
+    "postversion": "git push && git push --tags"
   },
   "author": "Altair Wei",
   "license": "MIT",

@@ -27,7 +27,11 @@ const default_extract_options = {
 };
 
 function extract(html, options = default_extract_options) {
-    const { convertImgTag, verbose, skipNonBodyTag } = options;
+    const {
+        convertImgTag,
+        verbose,
+        skipNonBodyTag    
+    } = options;
 
     let markdown_lines = [];
     let in_body_tag = false;
