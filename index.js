@@ -78,14 +78,22 @@ function extract(html, options = default_extract_options) {
             if (skipNonBodyTag && !in_body_tag) {
                 return;
             }
-
+            // https://html.spec.whatwg.org/multipage/named-characters.html#named-character-references
+            // It is intentional, for legacy compatibility, that many code
+            // points have multiple character reference names. For example,
+            // some appear both with and without the trailing semicolon, or
+            //  with different capitalizations.
             text = text.replace(/&apos;/g, "'")
                 .replace(/&quot;/g, "\"")
+                .replace(/&quot/g, "\"")
                 .replace(/&grave;/g, "`")
                 .replace(/&lt;/g, "<")
+                .replace(/&lt/g, "<")
                 .replace(/&gt;/g, ">")
-                .replace(/&Tab;/g, "\t");
-            text = text.replace(/&nbsp;/g, "\u0020");
+                .replace(/&gt/g, ">")
+                .replace(/&Tab;/g, "\t")
+                .replace(/&nbsp;/g, "\u0020")
+                .replace(/&nbsp/g, "\u0020");
             // &amp; should be decoded after all other entities.
             text = text.replace(/&amp;/g, "&");
             markdown_lines.push(text);

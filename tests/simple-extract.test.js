@@ -67,6 +67,24 @@ test("Html entities from user input", () => {
     )).toBe(
         "Show `<br/>`\n"
     );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("&nbsp;&nbspHello&nbsp&nbsp;")
+    )).toBe(
+        "  Hello  "
+    );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("&quot;&quot&quot&quot;&quot&quot;")
+    )).toBe(
+        "\"\"\"\"\"\""
+    );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("&lt&lt;&lt&lt&lt;&lt;&gt&gt;&gt&gt&gt;&gt")
+    )).toBe(
+        "<<<<<<>>>>>>"
+    );
 });
 
 
