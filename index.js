@@ -120,46 +120,57 @@ function extract(html, options = default_extract_options) {
 }
 
 const default_embed_options = {
-    escapeTabWithEntity: false
+    escapeTabWithEntity: false,
+    wrapWithPreTag: false
 };
 
 function embed(text, options = default_embed_options) {
-    const { escapeTabWithEntity } = options;
+    const { escapeTabWithEntity, wrapWithPreTag } = options;
     const char_array = Array.from(text);
     const encoded = char_array.map(function(char) {
+        // We only need to escape 3 unsafe chars in <pre></pre>.
+        //  Whitespace inside this element is displayed as written.
         switch(char) {
-        // Unsafe symbols
-        case "'":
-            return "&apos;";
-        case "\"":
-            return "&quot;";
-        case "`":
-            return "&grave;";
         case "&":
             return "&amp;";
         case "<":
             return "&lt;";
         case ">":
             return "&gt;";
-        // Space and line break
-        case "\t":
-            return escapeTabWithEntity ? "&Tab;" : "&nbsp;".repeat(4);
-        case "\n":
-        case "\r":
-        case "\r\n":
-        case "\u0085":
-        case "\u2028":
-        case "\u2029":
-            return "<br>";
-        case "\u0020":
-            return "&nbsp;";
-        default:
-            return char;
         }
+
+        if (!wrapWithPreTag) {
+            switch(char) {
+            // Unsafe symbols
+            case "'":
+                return "&apos;";
+            case "\"":
+                return "&quot;";
+            case "`":
+                return "&grave;";
+            // Space and line break
+            case "\t":
+                return escapeTabWithEntity ? "&Tab;" : "&nbsp;".repeat(4);
+            case "\n":
+            case "\r":
+            case "\r\n":
+            case "\u0085":
+            case "\u2028":
+            case "\u2029":
+                return "<br>";
+            case "\u0020":
+                return "&nbsp;";
+            }
+        }
+
+        // default to return original char.
+        return char;
+
     });
 
     const encoded_text = encoded.join("");
-    return `<!DOCTYPE html><html><head></head><body><pre>${encoded_text}</pre></body></html>`;
+    const final_text = wrapWithPreTag ? `<pre>${encoded_text}</pre>` : encoded_text;
+    return `<!DOCTYPE html><html><head><meta charset="utf-8" ></head><body>${final_text}</body></html>`;
 }
 
 module.exports = {
