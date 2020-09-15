@@ -21,13 +21,22 @@ const special_handling = ["html", "body"];
 const no_entity_sub = ["script", "style"];
 
 
+function normalize_whitespace(text) {
+    const pattern = /[\f\n\r\t\v\u{0020}]{2,}/ug;
+    const replacement = "\u0020";
+    return text.replace(pattern, replacement);
+}
+
+
 function extract(html, {
     convertImgTag = false,
     verbose = false,
-    skipNonBodyTag = false
+    skipNonBodyTag = false,
+    normalizeWhitespace = false
 } = {}) {
 
     let markdown_lines = [];
+    let tag_stack = [];
     let in_body_tag = false;
     let in_script_tag = false;
     let in_style_tag = false;
@@ -35,6 +44,8 @@ function extract(html, {
 
     const parser = new htmlparser2.Parser({
         onopentag(tagname, attribs) {
+            tag_stack.push({tagname, attribs});
+
             if (tagname === "script") {
                 // Stop extract script or style
                 in_script_tag = true;
@@ -51,6 +62,11 @@ function extract(html, {
             }
         },
         onclosetag(tagname) {
+            tag_obj = tag_stack.pop();
+            if (tag_obj.tagname !== tagname) {
+                throw new Error("tag not matched.");
+            }
+
             if (tagname === "script") {
                 // Continue to extract after script or style
                 in_script_tag = false;
@@ -68,6 +84,19 @@ function extract(html, {
             }
         },
         ontext(text) {
+            const current_tag_obj = tag_stack[tag_stack.length - 1];
+            
+            if (normalizeWhitespace) {
+                if (!(current_tag_obj && preserve_whitespace.includes(
+                    current_tag_obj.tagname))) {
+                    text = normalize_whitespace(text);
+                }
+                // TODO: how to process a leading newline character
+                //  immediately following the <pre> element start tag
+                // TODO: what broser do when encouter whitespaces ?
+                //  trim left and right ?
+            }
+
             if (in_script_tag || in_style_tag) {
                 // Skip script and style content
                 return;
@@ -168,5 +197,6 @@ function embed(text, {
 
 module.exports = {
     extract,
-    embed
+    embed,
+    normalize_whitespace
 };

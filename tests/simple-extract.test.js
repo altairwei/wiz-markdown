@@ -245,6 +245,28 @@ test("Formated html string with line breaks", () => {
         "\n\n  \n    Href Attribute Example\n  \n" // head
         + "  \n    Href Attribute Example\n\n    Hello\n\n  \n" // body
     );
+
+
+    expect(wizmarkdown.extract(
+`<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" >
+  </head>
+  <body>
+    <pre><!--wiznote-lite-markdown--></pre>
+  </body>
+</html>`, {normalizeWhitespace: true}
+    )).toBe(
+        "\n      \n"
+    );
+
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5("<pre>                </pre>"),
+        {normalizeWhitespace: true}
+    )).toBe(
+        "                "
+    );
 });
 
 
