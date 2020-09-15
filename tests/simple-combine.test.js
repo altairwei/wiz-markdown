@@ -87,6 +87,12 @@ test("Long article test", () => {
         )
     ).toBe(makrdown_source);
 
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
+        )
+    ).toBe(makrdown_source);
+
     makrdown_source = `
 # Editor.md
 
@@ -304,6 +310,12 @@ X&sup2; Y&sup3; &frac34; &frac14;  &times;  &divide;   &raquo;
             wizmarkdown.embed(makrdown_source)
         )
     ).toBe(makrdown_source);
+
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
+        )
+    ).toBe(makrdown_source);
 });
 
 
@@ -398,6 +410,12 @@ testBox.add("jQuery").remove("jQuery");
             wizmarkdown.embed(makrdown_source, {escapeTabWithEntity: true})
         )
     ).toBe(makrdown_source);
+
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
+        )
+    ).toBe(makrdown_source);
 });
 
 
@@ -447,6 +465,12 @@ f(x) = \\int_{-\\infty}^\\infty
     expect(
         wizmarkdown.extract(
             wizmarkdown.embed(makrdown_source)
+        )
+    ).toBe(makrdown_source);
+
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
         )
     ).toBe(makrdown_source);
 });
