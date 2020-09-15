@@ -20,18 +20,12 @@ const preserve_whitespace = ["pre", "textarea", "script", "style"];
 const special_handling = ["html", "body"];
 const no_entity_sub = ["script", "style"];
 
-const default_extract_options = {
-    convertImgTag: false,
-    verbose: false,
-    skipNonBodyTag: false
-};
 
-function extract(html, options = default_extract_options) {
-    const {
-        convertImgTag,
-        verbose,
-        skipNonBodyTag    
-    } = options;
+function extract(html, {
+    convertImgTag = false,
+    verbose = false,
+    skipNonBodyTag = false
+} = {}) {
 
     let markdown_lines = [];
     let in_body_tag = false;
@@ -119,13 +113,12 @@ function extract(html, options = default_extract_options) {
     return markdown_lines.join("");
 }
 
-const default_embed_options = {
-    escapeTabWithEntity: false,
-    wrapWithPreTag: false
-};
 
-function embed(text, options = default_embed_options) {
-    const { escapeTabWithEntity, wrapWithPreTag } = options;
+function embed(text, {
+    escapeTabWithEntity = false,
+    wrapWithPreTag = false
+} = {}) {
+
     const char_array = Array.from(text);
     const encoded = char_array.map(function(char) {
         // We only need to escape 3 unsafe chars in <pre></pre>.

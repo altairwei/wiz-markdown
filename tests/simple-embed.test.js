@@ -89,3 +89,44 @@ test("Encode other character", () => {
         )
     );
 });
+
+
+test("Test wrapWithPreTag option", () => {
+    expect(wizmarkdown.embed(
+        "# Hello World",
+        {wrapWithPreTag: true}
+    )).toBe(
+        wrapEncodedTextInHtml5(
+            "<pre># Hello World</pre>"
+        )
+    );
+
+    expect(wizmarkdown.embed(
+        "This is a tag `<br/>`, this is a entity `&nbsp;`",
+        {wrapWithPreTag: true}
+    )).toBe(
+        wrapEncodedTextInHtml5(
+            "<pre>This is a tag `&lt;br/&gt;`, this is a entity `&amp;nbsp;`</pre>"
+        )
+    );
+
+    // A series of whitespaces were preserved
+    expect(wizmarkdown.embed(
+        "    # Hello     World   ",
+        {wrapWithPreTag: true}
+    )).toBe(
+        wrapEncodedTextInHtml5(
+            "<pre>    # Hello     World   </pre>"
+        )
+    );
+
+    // Line breaks were preserved
+    expect(wizmarkdown.embed(
+        "# Hello World \n # Whitespace \r\n",
+        {wrapWithPreTag: true}
+    )).toBe(
+        wrapEncodedTextInHtml5(
+            "<pre># Hello World \n # Whitespace \r\n</pre>"
+        )
+    );
+});

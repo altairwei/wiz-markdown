@@ -2,6 +2,7 @@
   "name": "@altairwei/wiz-markdown",
   "version": "1.0.10",
   "description": "Extract Markdown text embedded in WizNote document HTML.",
+  "keywords": ["WizNote", "Markdown"],
   "homepage": "https://github.com/altairwei/wiz-markdown#readme",
   "repository": {
     "type": "git",

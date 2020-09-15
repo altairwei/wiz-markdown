@@ -15,7 +15,8 @@ Embed markdown into html:
 ```javascript
 const wizmarkdown = require("@altairwei/wiz-markdown");
 const html = wizmarkdown.embed(text, {
-    escapeTabWithEntity: false // default to replace `\t` with 4 `&nbsp;`
+    escapeTabWithEntity: false, // default to replace `\t` with 4 `&nbsp;`
+    wrapWithPreTag: true // Wrap markdown text within <pre> tag and perform only minimal character escaping
 });
 console.log(html);
 ```
