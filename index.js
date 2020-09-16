@@ -46,7 +46,8 @@ function extract(html, {
     convertImgTag = false,
     verbose = false,
     skipNonBodyTag = false,
-    normalizeWhitespace = false
+    normalizeWhitespace = false,
+    debug = false
 } = {}) {
 
     let markdown_lines = [];
@@ -58,8 +59,10 @@ function extract(html, {
 
     const parser = new htmlparser2.Parser({
         onopentag(tagname, attribs) {
+            const stack_string = tag_stack.map(tag_obj => tag_obj.tagname).join(", ");
             tag_stack.push({tagname, attribs});
-
+            if (debug)
+                console.log("Push:", stack_string, "<--", tagname);
             if (tagname === "script") {
                 // Stop extract script or style
                 in_script_tag = true;
@@ -77,8 +80,10 @@ function extract(html, {
         },
         onclosetag(tagname) {
             tag_obj = tag_stack.pop();
+            const stack_string = tag_stack.map(tag_obj => tag_obj.tagname).join(", ");
+            if (debug)
+                console.log("Pop:", stack_string, "-->", tag_obj.tagname);
             if (tag_obj.tagname !== tagname) {
-                const stack_string = tag_stack.map(tag_obj => tag_obj.tagname).join(", ");
                 throw new Error(`<${tag_obj.tagname}> doesn't match </${tagname}>. Stack trace: ${stack_string}`);
             }
 
