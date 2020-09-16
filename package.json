@@ -1,6 +1,6 @@
 {
   "name": "@altairwei/wiz-markdown",
-  "version": "1.0.11",
+  "version": "1.0.12",
   "description": "Extract Markdown text embedded in WizNote document HTML.",
   "keywords": [
     "WizNote",
