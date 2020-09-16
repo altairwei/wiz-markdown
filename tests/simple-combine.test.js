@@ -89,9 +89,24 @@ test("Long article test", () => {
 
     expect(
         wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source);
+
+    expect(
+        wizmarkdown.extract(
             wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
         )
     ).toBe(makrdown_source);
+
+    // remove newline character after pre tag
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true}),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source.substring(1));
 
     makrdown_source = `
 # Editor.md
@@ -313,9 +328,24 @@ X&sup2; Y&sup3; &frac34; &frac14;  &times;  &divide;   &raquo;
 
     expect(
         wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source);
+
+    expect(
+        wizmarkdown.extract(
             wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
         )
     ).toBe(makrdown_source);
+
+    // remove newline character after pre tag
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true}),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source.substring(1));
 });
 
 
@@ -413,9 +443,24 @@ testBox.add("jQuery").remove("jQuery");
 
     expect(
         wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {escapeTabWithEntity: true}),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source);
+
+    expect(
+        wizmarkdown.extract(
             wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
         )
     ).toBe(makrdown_source);
+
+    // remove newline character after pre tag
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true}),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source.substring(1));
 });
 
 
@@ -470,7 +515,22 @@ f(x) = \\int_{-\\infty}^\\infty
 
     expect(
         wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source);
+
+    expect(
+        wizmarkdown.extract(
             wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true})
         )
     ).toBe(makrdown_source);
+
+    // remove newline character after pre tag
+    expect(
+        wizmarkdown.extract(
+            wizmarkdown.embed(makrdown_source, {wrapWithPreTag: true}),
+            {normalizeWhitespace: true}
+        )
+    ).toBe(makrdown_source.substring(1));
 });

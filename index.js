@@ -22,9 +22,23 @@ const no_entity_sub = ["script", "style"];
 
 
 function normalize_whitespace(text) {
-    const pattern = /[\f\n\r\t\v\u{0020}]{2,}/ug;
-    const replacement = "\u0020";
-    return text.replace(pattern, replacement);
+    // Trim left and right whitespace
+    text = text.replace(/(^[\f\n\r\t\v\u0020]{1,}|[\f\n\r\t\v\u0020]{1,}$)/ug, "");
+    if (!text) {
+        return "";
+    }
+    // Normalize whitespace within content
+    text = text.replace(/[\f\n\r\t\v\u{0020}]{2,}/ug, "\u0020");
+    return text;
+}
+
+
+function isWithinPreTag(stack) {
+    const index = stack.slice().reverse().findIndex(tag_obj => {
+        return tag_obj.tagname === "pre";
+    });
+
+    return index === -1 ? false : true;
 }
 
 
@@ -40,7 +54,7 @@ function extract(html, {
     let in_body_tag = false;
     let in_script_tag = false;
     let in_style_tag = false;
-    let in_pre_tag = false;
+    let num_of_pre_text_node = 0;
 
     const parser = new htmlparser2.Parser({
         onopentag(tagname, attribs) {
@@ -51,10 +65,10 @@ function extract(html, {
                 in_script_tag = true;
             } else if (tagname === "style") {
                 in_style_tag = true;
+            } else if (tagname === "pre") {
+                num_of_pre_text_node = 0;
             } else if (tagname === "body") {
                 in_body_tag = true;
-            } else if (tagname === "pre" && in_body_tag) {
-                in_pre_tag = true;
             } else if (tagname === "img" && convertImgTag) {
                 const alt = attribs.alt ? attribs.alt : "";
                 const src = attribs.src ? attribs.src : "";
@@ -64,7 +78,8 @@ function extract(html, {
         onclosetag(tagname) {
             tag_obj = tag_stack.pop();
             if (tag_obj.tagname !== tagname) {
-                throw new Error("tag not matched.");
+                const stack_string = tag_stack.map(tag_obj => tag_obj.tagname).join(", ");
+                throw new Error(`<${tag_obj.tagname}> doesn't match </${tagname}>. Stack trace: ${stack_string}`);
             }
 
             if (tagname === "script") {
@@ -72,10 +87,10 @@ function extract(html, {
                 in_script_tag = false;
             } else if (tagname === "style") {
                 in_style_tag = false;
+            } else if (tagname === "pre") {
+                num_of_pre_text_node = 0;
             } else if (tagname === "body") {
                 in_body_tag = false;
-            } else if (tagname === "pre" && in_body_tag) {
-                in_pre_tag = false;
             } else if (block_level.includes(tagname)) {
                 markdown_lines.push("\n");
             } else if (tagname === "br") {
@@ -84,17 +99,31 @@ function extract(html, {
             }
         },
         ontext(text) {
-            const current_tag_obj = tag_stack[tag_stack.length - 1];
-            
+            // Get current tag from top of stack
+            const {tagname, attribs} = tag_stack[tag_stack.length - 1] || {};
+
             if (normalizeWhitespace) {
-                if (!(current_tag_obj && preserve_whitespace.includes(
-                    current_tag_obj.tagname))) {
+                // See https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace
+                //  Whitespace in between words is treated as a single character,
+                //  and whitespace at the start and end of elements and outside
+                //  elements is ignored.
+                let shouldPreserve = (tagname && preserve_whitespace.includes(tagname)) || isWithinPreTag(tag_stack);
+                if (!shouldPreserve) {
                     text = normalize_whitespace(text);
                 }
-                // TODO: how to process a leading newline character
+                // Process a leading newline character
                 //  immediately following the <pre> element start tag
-                // TODO: what broser do when encouter whitespaces ?
-                //  trim left and right ?
+                if (tagname && tagname === "pre") {
+                    num_of_pre_text_node += 1;
+                    if (num_of_pre_text_node === 1
+                        && text[0] === "\n") {
+                        text = text.substring(1);
+                    }
+                }
+            }
+
+            if (text === "") {
+                return;
             }
 
             if (in_script_tag || in_style_tag) {
@@ -126,9 +155,7 @@ function extract(html, {
             markdown_lines.push(text);
         },
         onerror(error) {
-            if (verbose) {
-                console.error(error);
-            }
+            throw error;
         }
     },
     {
