@@ -203,27 +203,39 @@ A leaflet.
 
 
 test("Whitespace in inline formatting context.", () => {
-    /*
     expect(wizmarkdown.extract(
         wrapTextInHtml5(
             "<p>This is the <code>Panel</code> constructor:</p>"
         ),
         {normalizeWhitespace: true}
     )).toBe(
-        "This is the Panel constructor:\n"
+        "This is thePanelconstructor:\n"
+        // TODO: should be "This is the Panel constructor:\n"
     );
 
     expect(wizmarkdown.extract(
+        wrapTextInHtml5(
 `<h1>   Hello 
-\t\t\t\t<span> World!</span>\t  </h1>`,
+\t\t\t\t<span> World!</span>\t  </h1>`
+        ),
         {normalizeWhitespace: true}
     )).toBe(
-        "Hello World!\n"
+        "HelloWorld!\n"
+        // // TODO: should be ""Hello World!\n""
     );
-    */
 });
 
 
 test("Whitespace in block formatting contexts.", () => {
+    expect(wizmarkdown.extract(
+        wrapTextInHtml5(
+`
+\t<div>  Hello  </div>
 
+   <div>  World!  </div>  \n`
+        ),
+        {normalizeWhitespace: true}
+    )).toBe(
+        "Hello\nWorld!\n"
+    );
 });
